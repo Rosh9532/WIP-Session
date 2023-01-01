@@ -42,15 +42,15 @@ exports.SignUp=async(req,res)=>{
 }
 
 exports.login=async(req,res)=>{
-    console.log("hello")
+   
     const{email,password}=req.body
-    User.findOne({Email:email},async (err,data)=>{
+    User.findOne({Email:email}).exec(async (err,data)=>{
         if(err){
             res.status(400).json({
-                message:"User Not Found"
+                message:err
             })
         }
-        else{
+        if(data){
             const isPassword=await data.authenticate(password)
             console.log(isPassword)
             if(password){
@@ -66,6 +66,12 @@ exports.login=async(req,res)=>{
                     data:data
                 })
             }
+        }
+        else{
+            res.status(200).json({
+                message:"User Not found",
+                data:data
+            })
         }
     })
 
